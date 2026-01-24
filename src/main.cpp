@@ -16,5 +16,12 @@ int main(int argc, char **argv) {
 
   jt::ppm::file ppm_file(ppm_file_raw);
 
+  for (auto &row : ppm_file.get_data()) {
+    for (auto &thing : row) {
+      std::print("({}, {}, {}) ", thing.r, thing.g, thing.b);
+    }
+    std::println();
+  }
+
   ppm_file_raw.close();
 }
