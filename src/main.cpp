@@ -1,5 +1,6 @@
 #include "jtracer/ppm.hpp"
 #include <fstream>
+#include <print>
 
 int main(int argc, char **argv) {
   if (argc <= 1) {
@@ -7,12 +8,13 @@ int main(int argc, char **argv) {
     return -1;
   }
 
-  std::ifstream ppm_file(argv[1]);
-  if (!ppm_file.is_open()) {
+  std::ifstream ppm_file_raw(argv[1]);
+  if (!ppm_file_raw.is_open()) {
     std::println("[jt] failed to open {}", argv[1]);
     return -1;
   }
-  std::stringstream f;
-  f << ppm_file.rdbuf();
-  jt::ppm::file(f.str());
+
+  jt::ppm::file ppm_file(ppm_file_raw);
+
+  ppm_file_raw.close();
 }
