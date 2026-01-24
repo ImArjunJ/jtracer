@@ -1,6 +1,5 @@
 #include "ppm.hpp"
 #include <limits>
-#include <print>
 #include <sstream>
 #include <stdexcept>
 namespace jt::ppm {
