@@ -1,4 +1,5 @@
 #include "ppm.hpp"
+#include <algorithm>
 #include <limits>
 #include <sstream>
 #include <stdexcept>
@@ -54,7 +55,7 @@ void file::parse_p3(const std::string &input_string) {
         current_num = "";
         continue;
       }
-      if (this->max_val == std::numeric_limits<int>::max()) {
+      if (this->max_val == 0) {
         this->max_val = std::stoi(current_num);
         current_num = "";
         continue;
@@ -93,5 +94,18 @@ bool file::write(file_version version, std::ofstream &output_file) {
     return false;
   }
   return true;
+}
+void file::push_data(std::vector<math::col3> row) {
+  if (!this->data.empty()) {
+    if (row.size() != this->data[0].size())
+      throw std::runtime_error(
+          "[jt::ppm::file] mismatched row size push attempted");
+  }
+  this->data.push_back(row);
+  this->size.x = row.size();
+  this->size.y = this->data.size();
+  jt::math::col3 &max_elem = *std::max_element(row.begin(), row.end());
+  if (this->max_val < max_elem.max())
+    this->max_val = max_elem.max();
 }
 } // namespace jt::ppm
