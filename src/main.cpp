@@ -23,5 +23,7 @@ int main(int argc, char **argv) {
     std::println();
   }
 
+  std::ofstream gradient_ppm("test/test_write.ppm");
+  ppm_file.write(jt::ppm::file_version::v3, gradient_ppm);
   ppm_file_raw.close();
 }

@@ -2,6 +2,7 @@
 #include <limits>
 #include <sstream>
 #include <stdexcept>
+
 namespace jt::ppm {
 file &file::parse(std::ifstream &input) {
   std::stringstream ss;
@@ -10,18 +11,17 @@ file &file::parse(std::ifstream &input) {
   std::string header = input_string.substr(0, 2);
   if (header != "P3" && header != "P6")
     throw std::runtime_error("[jt::ppm] invalid header");
+  this->version = (header[1] == '3') ? file_version::v3 : file_version::v6;
   input_string.erase(0, 2);
-
-  switch (header[1]) {
-  case '3':
+  switch (this->version) {
+  case file_version::v3:
     this->parse_p3(input_string);
     break;
-  case '6':
+  default:
     throw std::runtime_error(
-        "[jt::ppm] version 6 ppms are currently unsupported");
+        "[jt::ppm] version 6 and other ppms are currently unsupported");
     break;
   }
-
   return *this;
 }
 void file::parse_p3(const std::string &input_string) {
@@ -75,5 +75,23 @@ void file::parse_p3(const std::string &input_string) {
       row.clear();
     }
   }
+}
+bool file::write(file_version version, std::ofstream &output_file) {
+  switch (version) {
+  case file_version::v3: {
+    output_file << "P3\n"
+                << this->size.x << " " << this->size.y << "\n"
+                << this->max_val << "\n";
+    for (std::uint32_t i = 0; i < this->size.x; i++) {
+      for (std::uint32_t j = 0; j < this->size.y; j++) {
+        output_file << this->data[i][j] << "\n";
+      }
+    }
+    break;
+  }
+  default:
+    return false;
+  }
+  return true;
 }
 } // namespace jt::ppm
