@@ -1,33 +1,34 @@
-#include "math.hpp"
 #include <cstdint>
 #include <fstream>
 #include <limits>
 #include <queue>
 #include <string>
 #include <vector>
+
+#include "math.hpp"
 namespace jt::ppm {
 typedef std::queue<std::string> ppm_queue;
 enum class file_version : std::uint8_t { v3 = 0, v6, none };
 class file {
-public:
+ public:
   file() = default;
-  file(std::ifstream &input_file) { this->parse(input_file); }
-  math::vec2i get_size() { return size; }
-  std::uint32_t get_max_val() { return max_val; }
-  std::vector<std::vector<math::col3>> &get_data() { return data; }
-  file &parse(std::ifstream &input_file);
-  bool write(file_version version, std::ofstream &output_file);
+  file(std::ifstream& input_file) { this->parse(input_file); }
+  math::vec2i get_size() const { return size; }
+  std::uint32_t get_max_val() const { return max_val; }
+  std::vector<std::vector<math::col3>>& get_data() { return data; }
+  file& parse(std::ifstream& input_file);
+  bool write(file_version version, std::ofstream& output_file);
   void push_data(std::vector<math::col3> row);
 
-private:
-  void parse_p3(const std::string &input_string);
-  void parse_p6(const std::string &input_string);
+ private:
+  void parse_p3(const std::string& input_string);
+  void parse_p6(const std::string& input_string);
 
-private:
+ private:
   math::vec2i size = {std::numeric_limits<int>::max(),
                       std::numeric_limits<int>::max()};
   std::uint32_t max_val = 0;
   file_version version = file_version::none;
-  std::vector<std::vector<math::col3>> data;
+  std::vector<std::vector<math::col3>> data = {};
 };
-} // namespace jt::ppm
+}  // namespace jt::ppm
