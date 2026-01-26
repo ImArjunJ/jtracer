@@ -1,4 +1,7 @@
+#pragma once
+#include <cmath>
 #include <cstdint>
+#include <format>
 #include <ostream>
 namespace jt::math {
 template <typename T>
@@ -7,19 +10,76 @@ struct vec2_t {
 };
 typedef vec2_t<float> vec2f;
 typedef vec2_t<int> vec2i;
-struct col3 {
-  std::uint32_t r, g, b;
-  std::uint32_t max() { return std::max(std::max(r, g), b); }
-  friend std::ostream& operator<<(std::ostream& ss, col3& col) {
-    ss << col.r << ' ' << col.g << ' ' << col.b;
-    return ss;
+
+template <typename T>
+struct vec3_t {
+  T x, y, z;
+  friend vec3_t<T> operator+(const vec3_t<T> a, const vec3_t<T> b) {
+    return {a.x + b.x, a.y + b.y, a.z + b.z};
   }
-  friend bool operator<(col3& lhs, col3& rhs) {
-    return lhs.r < rhs.r || lhs.g < rhs.g || lhs.b < rhs.b;
+  friend vec3_t<T> operator-(const vec3_t<T> a, const vec3_t<T> b) {
+    return {a.x - b.x, a.y - b.y, a.z - b.z};
   }
-  friend bool operator>(col3& lhs, col3& rhs) {
-    return lhs.r > rhs.r || lhs.r > rhs.r || lhs.b > rhs.b;
+  friend vec3_t<T> operator*(const vec3_t<T> a, const T b) {
+    return {a.x * b, a.y * b, a.z * b};
   }
+  friend vec3_t<T> operator/(const vec3_t<T> a, const T b) {
+    return {a.x / b, a.y / b, a.z / b};
+  }
+  friend std::ostream& operator<<(std::ostream& out, const vec3_t<T> vec) {
+    out << std::format("{},{},{}", vec.x, vec.y, vec.z);
+    return out;
+  }
+  T magnitude() {
+    return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
+  }
+  T dot(vec3_t<T>& other) {
+    return this->x * other.x + this->y * other.y + this->z * other.z;
+  }
+  vec3_t<T> normalize() { return *this / magnitude(); }
 };
 
+typedef vec3_t<float> vec3f;
+typedef vec3_t<std::int32_t> vec3i;
+typedef vec3_t<std::uint32_t> vec3ui;
+
+// a ray is in the form A + tB s.t. A is the origin vec, B is the direction vec
+class ray {
+ public:
+  ray(vec3f origin, vec3f direction)
+      : m_origin(origin), m_direction(direction) {}
+
+  vec3f at(std::int32_t t) { return this->m_origin + (this->m_direction * t); }
+
+ private:
+  vec3f m_origin, m_direction;
+};
+
+struct col3 : vec3ui {
+  std::uint32_t r() { return this->x; }
+  std::uint32_t g() { return this->y; }
+  std::uint32_t b() { return this->z; }
+  std::uint32_t max() { return std::max(std::max(r(), g()), b()); }
+  friend bool operator<(col3 lhs, col3 rhs) {
+    return lhs.r() < rhs.r() || lhs.g() < rhs.g() || lhs.b() < rhs.b();
+  }
+  friend bool operator>(col3 lhs, col3 rhs) {
+    return lhs.r() > rhs.r() || lhs.r() > rhs.r() || lhs.b() > rhs.b();
+  }
+  friend std::ostream& operator<<(std::ostream& out, const col3& vec) {
+    out << std::format("{} {} {}", vec.x, vec.y, vec.z);
+    return out;
+  }
+};
 }  // namespace jt::math
+
+template <>
+struct std::formatter<jt::math::vec3f> {
+  constexpr auto parse(std::format_parse_context& context) {  // (4)
+    return context.begin();
+  }
+  auto format(const jt::math::vec3f& vec,
+              std::format_context& context) const {  // (5)
+    return std::format_to(context.out(), "{},{},{}", vec.x, vec.y, vec.z);
+  }
+};

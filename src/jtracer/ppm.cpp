@@ -107,4 +107,20 @@ void file::push_data(std::vector<math::col3> row) {
   jt::math::col3& max_elem = *std::max_element(row.begin(), row.end());
   if (this->max_val < max_elem.max()) this->max_val = max_elem.max();
 }
+void file::set_data(std::uint32_t x, std::uint32_t y, math::col3 val) {
+  if (x >= this->size.x || y >= this->size.y)
+    throw std::runtime_error(
+        "[jt::ppm::file] out of bounds x,y provided to set_data");
+
+  this->data[x][y] = val;
+  if (val > math::col3{max_val, max_val, max_val}) {
+    max_val = val.max();
+  }
+}
+void file::reserve(std::uint32_t width, std::uint32_t height, math::col3 val) {
+  this->size.x = width;
+  this->size.y = height;
+  std::vector<math::col3> row(width, val);
+  this->data = std::vector(height, row);
+}
 }  // namespace jt::ppm

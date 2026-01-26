@@ -1,3 +1,4 @@
+#pragma once
 #include <cstdint>
 #include <fstream>
 #include <limits>
@@ -19,6 +20,9 @@ class file {
   file& parse(std::ifstream& input_file);
   bool write(file_version version, std::ofstream& output_file);
   void push_data(std::vector<math::col3> row);
+  void reserve(std::uint32_t width, std::uint32_t height,
+               math::col3 val = math::col3{0, 0, 0});
+  void set_data(std::uint32_t x, std::uint32_t y, math::col3 value);
 
  private:
   void parse_p3(const std::string& input_string);
