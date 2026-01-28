@@ -33,7 +33,7 @@ struct vec3_t {
   T magnitude() {
     return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
   }
-  T dot(vec3_t<T>& other) {
+  T dot(vec3_t<T> other) const {
     return this->x * other.x + this->y * other.y + this->z * other.z;
   }
   vec3_t<T> normalize() { return *this / magnitude(); }
@@ -49,7 +49,9 @@ class ray {
   ray(vec3f origin, vec3f direction)
       : m_origin(origin), m_direction(direction) {}
 
-  vec3f at(std::int32_t t) { return this->m_origin + (this->m_direction * t); }
+  vec3f at(std::float_t t) { return this->m_origin + (this->m_direction * t); }
+  vec3f get_direction() { return m_direction; }
+  vec3f get_origin() { return m_origin; }
 
  private:
   vec3f m_origin, m_direction;
@@ -64,7 +66,7 @@ struct col3 : vec3ui {
     return lhs.r() < rhs.r() || lhs.g() < rhs.g() || lhs.b() < rhs.b();
   }
   friend bool operator>(col3 lhs, col3 rhs) {
-    return lhs.r() > rhs.r() || lhs.r() > rhs.r() || lhs.b() > rhs.b();
+    return lhs.r() > rhs.r() || lhs.g() > rhs.g() || lhs.b() > rhs.b();
   }
   friend std::ostream& operator<<(std::ostream& out, const col3& vec) {
     out << std::format("{} {} {}", vec.x, vec.y, vec.z);

@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <print>
 #include <sstream>
 #include <stdexcept>
 
@@ -10,7 +11,7 @@ file& file::parse(std::ifstream& input) {
   std::stringstream ss;
   ss << input.rdbuf();
   std::string input_string = ss.str();
-  std::string header = input_string.substr(0, 2);
+  const std::string header = input_string.substr(0, 2);
   if (header != "P3" && header != "P6")
     throw std::runtime_error("[jt::ppm] invalid header");
   this->version = (header[1] == '3') ? file_version::v3 : file_version::v6;
@@ -109,8 +110,9 @@ void file::push_data(std::vector<math::col3> row) {
 }
 void file::set_data(std::uint32_t x, std::uint32_t y, math::col3 val) {
   if (x >= this->size.x || y >= this->size.y)
-    throw std::runtime_error(
-        "[jt::ppm::file] out of bounds x,y provided to set_data");
+    throw std::runtime_error(std::format(
+        "[jt::ppm::file] out of bounds x,y provided to set_data ({},{})", x,
+        y));
 
   this->data[x][y] = val;
   if (val > math::col3{max_val, max_val, max_val}) {
