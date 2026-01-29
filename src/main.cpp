@@ -9,6 +9,7 @@
 #include <jtracer/ppm.hpp>
 #include <jtracer/window.hpp>
 #include <numbers>
+#include <print>
 
 int main(int argc, char** argv) {
   if (!jt::window::create())
@@ -32,7 +33,8 @@ int main(int argc, char** argv) {
       // z
       jt::math::vec3f direction = {
           cartesian.x, cartesian.y,
-          (image.get_size().x / 2.f) / tanf(fov * (std::numbers::pi / 360.f))};
+          (image.get_size().x / 2.f) /
+              std::tanf(fov * (std::numbers::pi / 360.f))};
       jt::math::ray ray(origin, direction);
 
       for (auto& thing : objects) {
@@ -43,11 +45,14 @@ int main(int argc, char** argv) {
         jt::math::vec3f color_vec = {std::abs(data.normal.x),
                                      std::abs(data.normal.y),
                                      std::abs(data.normal.z)};
-
-        image.set_data(j, i,
-                       {(std::uint32_t)(color_vec.x * 255),
-                        (std::uint32_t)(color_vec.y * 255),
-                        (std::uint32_t)(color_vec.z * 255)});
+        jt::math::vec3f light_dir = {-100, 10, 0};
+        std::float_t radiance = 0.3f * (data.normal.dot(light_dir.normalize()));
+        if (radiance <= 0) radiance = 0.f;
+        std::println("rad: {}", radiance);
+        image.set_data(
+            j, i,
+            {(std::uint32_t)(radiance * 255), (std::uint32_t)(radiance * 255),
+             (std::uint32_t)(radiance * 255)});
       }
     }
   }
