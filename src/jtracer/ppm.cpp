@@ -84,9 +84,9 @@ bool file::write(file_version version, std::ofstream& output_file) {
       output_file << "P3\n"
                   << this->size.x << " " << this->size.y << "\n"
                   << this->max_val << "\n";
-      for (std::uint32_t i = 0; i < this->size.x; i++) {
-        for (std::uint32_t j = 0; j < this->size.y; j++) {
-          output_file << this->data[i][j] << "\n";
+      for (std::uint32_t j = 0; j < this->size.y; j++) {
+        for (std::uint32_t i = 0; i < this->size.x; i++) {
+          output_file << this->data[j][i] << "\n";
         }
       }
       break;
@@ -114,7 +114,7 @@ void file::set_data(std::uint32_t x, std::uint32_t y, math::col3 val) {
         "[jt::ppm::file] out of bounds x,y provided to set_data ({},{})", x,
         y));
 
-  this->data[x][y] = val;
+  this->data[y][x] = val;
   if (val > math::col3{max_val, max_val, max_val}) {
     max_val = val.max();
   }

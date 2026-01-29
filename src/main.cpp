@@ -8,6 +8,7 @@
 #include <jtracer/objects/sphere.hpp>
 #include <jtracer/ppm.hpp>
 #include <jtracer/window.hpp>
+#include <numbers>
 
 int main(int argc, char** argv) {
   if (!jt::window::create())
@@ -18,15 +19,20 @@ int main(int argc, char** argv) {
   objects.push_back(jt::objects::sphere({30, 50, 100}, 30));
   std::ofstream out_file("test.ppm");
   jt::ppm::file image;
-  image.reserve(500, 500);
-  for (float i = 0; i < image.get_size().x; i++) {
-    for (float j = 0; j < image.get_size().y; j++) {
+  image.reserve(500, 600);
+  for (float i = 0; i < image.get_size().y; i++) {
+    for (float j = 0; j < image.get_size().x; j++) {
       const std::float_t aspect_ratio =
           static_cast<std::float_t>(image.get_size().x) / image.get_size().y;
       const jt::math::vec3f origin = {0, 0, 0};
-      const jt::math::vec2f cartesian = {i - image.get_size().y / 2.f,
-                                         j - image.get_size().x / 2.f};
-      const jt::math::vec3f direction = {cartesian.x, cartesian.y, 100};
+      const jt::math::vec2f cartesian = {j - image.get_size().x / 2.f,
+                                         i - image.get_size().y / 2.f};
+      const std::float_t fov = 80;
+      // calculate z based on fov we get 250/z = tan(fov) => 250 / tan(fov/2) =
+      // z
+      jt::math::vec3f direction = {
+          cartesian.x, cartesian.y,
+          (image.get_size().x / 2.f) / tanf(fov * (std::numbers::pi / 360.f))};
       jt::math::ray ray(origin, direction);
 
       for (auto& thing : objects) {
