@@ -1,5 +1,7 @@
 #pragma once
 
+#include <pulse.hpp>
+
 #include "hit_object.hpp"
 
 namespace jt::objects {
@@ -8,6 +10,7 @@ class sphere : public hit_object {
   sphere(math::vec3f center, std::float_t radius)
       : m_center(center), m_radius(radius) {}
   hit_data hit(math::ray& ray) override {
+    PULSE_FUNC();
     // need to find point where ray hits sphere
     // ray hits sphere for all points P s.t. |C-P| = R
     // let ray = A + tB

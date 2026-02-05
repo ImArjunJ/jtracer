@@ -1,6 +1,5 @@
 #pragma once
-#include "ppm.hpp"
 namespace jt::window {
 bool create();
-void tick(ppm::file& image);
+void render();
 }  // namespace jt::window

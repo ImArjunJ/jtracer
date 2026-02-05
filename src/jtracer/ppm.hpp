@@ -31,7 +31,7 @@ class file {
  private:
   math::vec2i size = {std::numeric_limits<int>::max(),
                       std::numeric_limits<int>::max()};
-  std::uint32_t max_val = 0;
+  std::uint32_t max_val = 255;
   file_version version = file_version::none;
   std::vector<std::vector<math::col3>> data = {};
 };

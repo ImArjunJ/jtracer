@@ -41,3 +41,9 @@ PUBLIC
   ${CMAKE_CURRENT_LIST_DIR}/imgui
   ${CMAKE_CURRENT_LIST_DIR}/imgui/backends
 )
+
+FetchContent_Declare(
+    pulse
+    GIT_REPOSITORY https://github.com/ImArjunJ/pulse.git)
+
+FetchContent_MakeAvailable(pulse)

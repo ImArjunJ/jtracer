@@ -53,11 +53,6 @@ void file::parse_p3(const std::string& input_string) {
         current_num = "";
         continue;
       }
-      if (this->max_val == 0) {
-        this->max_val = std::stoi(current_num);
-        current_num = "";
-        continue;
-      }
       data.push_back(std::stoi(current_num));
       current_num = "";
     }
@@ -66,7 +61,9 @@ void file::parse_p3(const std::string& input_string) {
 
   std::vector<math::col3> row = {};
   for (int i = 0; i < data.size(); i += 3) {
-    math::col3 curr_col = {data[i], data[i + 1], data[i + 2]};
+    math::col3 curr_col = {static_cast<std::uint8_t>(data[i]),
+                           static_cast<std::uint8_t>(data[i + 1]),
+                           static_cast<std::uint8_t>(data[i + 2])};
     row.push_back(curr_col);
     if (row.size() == this->size.x) {
       this->data.push_back(row);
@@ -105,8 +102,6 @@ void file::push_data(std::vector<math::col3> row) {
   this->data.push_back(row);
   this->size.x = row.size();
   this->size.y = this->data.size();
-  jt::math::col3& max_elem = *std::max_element(row.begin(), row.end());
-  if (this->max_val < max_elem.max()) this->max_val = max_elem.max();
 }
 void file::set_data(std::uint32_t x, std::uint32_t y, math::col3 val) {
   if (x >= this->size.x || y >= this->size.y)
@@ -115,9 +110,6 @@ void file::set_data(std::uint32_t x, std::uint32_t y, math::col3 val) {
         y));
 
   this->data[y][x] = val;
-  if (val > math::col3{max_val, max_val, max_val}) {
-    max_val = val.max();
-  }
 }
 void file::reserve(std::uint32_t width, std::uint32_t height, math::col3 val) {
   this->size.x = width;

@@ -30,20 +30,22 @@ struct vec3_t {
     out << std::format("{},{},{}", vec.x, vec.y, vec.z);
     return out;
   }
-  T magnitude() {
+  T magnitude() const {
     return std::sqrt(this->x * this->x + this->y * this->y + this->z * this->z);
   }
   T dot(vec3_t<T> other) const {
     return this->x * other.x + this->y * other.y + this->z * other.z;
   }
-  vec3_t<T> normalize() { return *this / magnitude(); }
+  vec3_t<T> normalize() const { return *this / magnitude(); }
 };
 
 typedef vec3_t<float> vec3f;
 typedef vec3_t<std::int32_t> vec3i;
 typedef vec3_t<std::uint32_t> vec3ui;
+typedef vec3_t<std::uint8_t> vec3u8;
 
-// a ray is in the form A + tB s.t. A is the origin vec, B is the direction vec
+// a ray is in the form A + tB s.t. A is the origin vec, B is the direction
+// vec
 class ray {
  public:
   ray(vec3f origin, vec3f direction)
@@ -57,11 +59,11 @@ class ray {
   vec3f m_origin, m_direction;
 };
 
-struct col3 : vec3ui {
-  std::uint32_t r() { return this->x; }
-  std::uint32_t g() { return this->y; }
-  std::uint32_t b() { return this->z; }
-  std::uint32_t max() { return std::max(std::max(r(), g()), b()); }
+struct col3 : vec3u8 {
+  std::uint8_t r() const { return this->x; }
+  std::uint8_t g() const { return this->y; }
+  std::uint8_t b() const { return this->z; }
+  std::uint8_t max() { return std::max(std::max(r(), g()), b()); }
   friend bool operator<(col3 lhs, col3 rhs) {
     return lhs.r() < rhs.r() || lhs.g() < rhs.g() || lhs.b() < rhs.b();
   }
